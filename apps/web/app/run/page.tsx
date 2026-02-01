@@ -112,7 +112,7 @@ export default function LiveRunPage() {
                     id: 'evt-3',
                     jobId: 'live-demo',
                     agentName: 'ArchitectAgent',
-                    message: 'Target architecture defined: Modular Monolith (Go).',
+                    message: 'Blueprint generated. Enforcing Hexagonal boundaries for 12 modules.',
                     timestamp: new Date().toISOString(),
                     level: 'success'
                 });
@@ -124,7 +124,7 @@ export default function LiveRunPage() {
                     id: 'evt-4',
                     jobId: 'live-demo',
                     agentName: 'RefactorAgent',
-                    message: 'Migration complete. 100% coverage.',
+                    message: 'Domain extraction complete. "OrderService" successfully isolated.',
                     timestamp: new Date().toISOString(),
                     level: 'success'
                 });
@@ -175,13 +175,22 @@ export default function LiveRunPage() {
                             {stage === 'INGESTING' && (
                                 <motion.div
                                     key="ingest"
-                                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                                    className="absolute inset-0 flex items-center justify-center p-12"
+                                    initial={{ opacity: 0, scale: 0.95 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 1.05, filter: 'blur(10px)' }}
+                                    transition={{ duration: 0.5 }}
+                                    className="absolute inset-0 flex items-center justify-center p-12 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-900/20 to-transparent"
                                 >
-                                    <div className="text-center space-y-4">
-                                        <div className="w-16 h-16 rounded-full border-4 border-blue-500/30 border-t-accent animate-spin mx-auto" />
-                                        <h3 className="text-lg font-medium text-text-primary">Scanning Codebase...</h3>
-                                        <p className="text-sm text-text-secondary font-mono">Parsing AST for 842 files</p>
+                                    <div className="text-center space-y-6">
+                                        <div className="relative w-24 h-24 mx-auto">
+                                            <div className="absolute inset-0 rounded-full border-4 border-dashed border-text-tertiary animate-[spin_10s_linear_infinite]" />
+                                            <div className="absolute inset-0 rounded-full border-4 border-t-accent border-r-transparent border-b-transparent border-l-transparent animate-spin" />
+                                            <div className="absolute inset-4 rounded-full bg-accent/10 animate-pulse" />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-xl font-medium text-white mb-2">Ingesting Codebase</h3>
+                                            <p className="text-sm text-text-secondary font-mono">Parsing AST for 842 files...</p>
+                                        </div>
                                     </div>
                                 </motion.div>
                             )}
@@ -189,34 +198,118 @@ export default function LiveRunPage() {
                             {stage === 'ANALYZING' && (
                                 <motion.div
                                     key="analyze"
-                                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                                    initial={{ opacity: 0, x: 20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -20 }}
+                                    transition={{ duration: 0.4 }}
                                     className="absolute inset-0 p-4"
                                 >
-                                    <GraphViewer nodes={SEED_GRAPH_NODES} edges={SEED_GRAPH_EDGES} />
+                                    <div className="flex flex-col h-full relative">
+                                        {/* Scanning Overlay Effect */}
+                                        <div className="absolute inset-0 pointer-events-none z-10 bg-scanline opacity-10" />
+
+                                        <div className="flex items-center justify-between mb-2 shrink-0 z-20">
+                                            <h4 className="text-xs font-bold text-accent uppercase tracking-tighter flex items-center gap-2">
+                                                <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+                                                Dependency Graph
+                                            </h4>
+                                            <span className="px-2 py-0.5 rounded bg-surface border border-border text-text-secondary text-[10px] font-mono">
+                                                NODES: 12 • EDGES: 24
+                                            </span>
+                                        </div>
+                                        <div className="flex-1 min-h-0 border border-border/50 rounded-lg overflow-hidden bg-surface/30 backdrop-blur-sm">
+                                            <GraphViewer nodes={SEED_GRAPH_NODES} edges={SEED_GRAPH_EDGES} />
+                                        </div>
+                                    </div>
                                 </motion.div>
                             )}
 
-                            {(stage === 'ARCHITECTING' || stage === 'MIGRATING') && (
+                            {stage === 'ARCHITECTING' && (
                                 <motion.div
                                     key="arch"
-                                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                                    initial={{ opacity: 0, rotateX: 90 }}
+                                    animate={{ opacity: 1, rotateX: 0 }}
+                                    exit={{ opacity: 0, rotateX: -90 }}
+                                    transition={{ duration: 0.6, type: "spring" }}
                                     className="absolute inset-0 bg-slate-950 p-4"
                                 >
-                                    <MermaidViewer chart={`graph TD
-    API[API Layer] --> SVC[Service Layer]
-    SVC --> REPO[Repository Layer]
-    REPO --> DB[(Database)]
-    style API fill:#a855f7,stroke:#333,stroke-width:2px
-    style SVC fill:#3b82f6,stroke:#333,stroke-width:2px
-    style REPO fill:#10b981,stroke:#333,stroke-width:2px
-    style DB fill:#475569,stroke:#333,stroke-width:2px`} />
+                                    <div className="flex flex-col h-full">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <h4 className="text-xs font-bold text-accent uppercase tracking-tighter">Target: Hexagonal Architecture</h4>
+                                            <span className="px-2 py-0.5 rounded bg-accent/20 text-accent text-[10px]">OPTIMIZED</span>
+                                        </div>
+                                        <div className="flex-1 min-h-0">
+                                            <MermaidViewer chart={`graph TD
+    subgraph "Infrastructure Layer"
+        HTTPS[HTTPS/JSON]
+        JDBC[JDBC/Postgres]
+    end
+
+    subgraph "Application Core"
+        API[API Adaptors]
+        SVC[Domain Services]
+        REPO[Repository Ports]
+    end
+
+    HTTPS --> API
+    API --> SVC
+    SVC --> REPO
+    REPO --> JDBC
+
+    style SVC fill:#3b82f6,stroke:#fff,stroke-width:2px
+    style API fill:#a855f7,stroke:#fff
+    style REPO fill:#10b981,stroke:#fff`} />
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            )}
+
+                            {stage === 'MIGRATING' && (
+                                <motion.div
+                                    key="migrate"
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 1.1 }}
+                                    transition={{ duration: 0.5 }}
+                                    className="absolute inset-0 bg-slate-950 p-4"
+                                >
+                                    <div className="flex flex-col h-full">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <h4 className="text-xs font-bold text-success uppercase tracking-tighter">Domain Extraction: OrderService</h4>
+                                            <span className="px-2 py-0.5 rounded bg-success/20 text-success text-[10px]">DECOUPLING</span>
+                                        </div>
+                                        <div className="flex-1 min-h-0">
+                                            <MermaidViewer chart={`graph LR
+    subgraph "Legacy Monolith"
+        M1[UserController]
+        M2[PaymentService]
+    end
+
+    subgraph "New Order Domain"
+        D1[OrderController]
+        D2[OrderService]
+        D3[OrderRepository]
+    end
+
+    M1 -.-> D2
+    D2 --> D3
+    M2 -- Shared DB --> D3
+
+    style D1 fill:#10b981,stroke:#fff
+    style D2 fill:#10b981,stroke:#fff
+    style D3 fill:#10b981,stroke:#fff
+    style M1 fill:#475569,stroke-dasharray: 5 5
+    style M2 fill:#475569,stroke-dasharray: 5 5`} />
+                                        </div>
+                                    </div>
                                 </motion.div>
                             )}
 
                             {stage === 'COMPLETE' && (
                                 <motion.div
                                     key="diff"
-                                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
                                     className="absolute inset-0"
                                 >
                                     <CodeDiffViewer />
