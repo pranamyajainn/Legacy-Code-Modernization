@@ -1,0 +1,29 @@
+path,type,language,approx_loc,key_role,notes
+README.md,documentation,markdown,120,Project Readme,
+package.json,config,json,20,Root Manifest,TurboRepo definitions
+turbo.json,config,json,15,Turbo Configuration,Build pipeline settings
+apps/api/package.json,config,json,20,API Manifest,Dependencies for API
+apps/api/src/index.ts,source,typescript,50,API Entrypoint,Hono server setup
+apps/api/src/core/orchestrator.ts,source,typescript,155,Core Logic,Job orchestration singleton
+apps/api/src/agents/scanner.ts,source,typescript,80,Agent Logic,Codebase scanner simulation
+apps/api/src/agents/graph.ts,source,typescript,90,Agent Logic,Dependency graph generation
+apps/api/src/agents/translator.ts,source,typescript,100,Agent Logic,Code translation simulation
+apps/web/package.json,config,json,35,Web Manifest,Next.js dependencies
+apps/web/next.config.js,config,javascript,10,Next.js Config,
+apps/web/tailwind.config.js,config,javascript,20,Tailwind Config,
+apps/web/tsconfig.json,config,json,25,TypeScript Config,
+apps/web/app/layout.tsx,source,tsx,80,Root Layout,Main app shell
+apps/web/app/page.tsx,source,tsx,408,Landing Page,Dashboard/Overview
+apps/web/app/run/page.tsx,source,tsx,350,Feature Page,Live Run orchestration UI
+apps/web/app/settings/page.tsx,source,tsx,225,Feature Page,Configuration UI
+apps/web/app/globals.css,source,css,100,Global Styles,Tailwind imports & custom styles
+apps/web/components/CodeDiffViewer.tsx,source,tsx,120,UI Component,Monaco editor wrapper
+apps/web/components/GraphViewer.tsx,source,tsx,150,UI Component,Cytoscape graph visualization
+apps/web/components/MermaidViewer.tsx,source,tsx,70,UI Component,Mermaid diagram renderer
+apps/web/components/Sidebar.tsx,source,tsx,100,UI Component,Navigation sidebar
+apps/web/lib/store/useJobStore.ts,source,typescript,67,State Management,Zustand store for jobs
+apps/web/lib/data/seed.ts,source,typescript,50,Mock Data,Seeded graph nodes/edges
+packages/shared/package.json,config,json,11,Package Manifest,Shared library def
+packages/shared/src/index.ts,source,typescript,40,Shared Types,Common interfaces
+data/sample/java-legacy/com/acme/order/api/OrderController.java,source,java,45,Legacy Code,Sample input for demo
+data/sample/java-legacy/com/acme/order/service/OrderService.java,source,java,80,Legacy Code,Sample input for demo

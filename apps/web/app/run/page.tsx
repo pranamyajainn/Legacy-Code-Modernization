@@ -240,25 +240,59 @@ export default function LiveRunPage() {
                                         </div>
                                         <div className="flex-1 min-h-0">
                                             <MermaidViewer chart={`graph TD
-    subgraph "Infrastructure Layer"
-        HTTPS[HTTPS/JSON]
-        JDBC[JDBC/Postgres]
+    classDef core fill:#1e293b,stroke:#3b82f6,stroke-width:2px,color:#fff
+    classDef port fill:#0f172a,stroke:#a855f7,stroke-width:1px,stroke-dasharray: 5 5,color:#d8b4fe
+    classDef adapter fill:#1e293b,stroke:#a855f7,stroke-width:2px,color:#d8b4fe
+    classDef infra fill:#0f172a,stroke:#64748b,stroke-width:1px,color:#94a3b8
+
+    subgraph "External Primary Actors"
+        Client[Web / Mobile Client]:::infra
+        External[3rd Party System]:::infra
     end
 
-    subgraph "Application Core"
-        API[API Adaptors]
-        SVC[Domain Services]
-        REPO[Repository Ports]
+    subgraph "Hexagon (Core Domain)"
+        direction TB
+        
+        subgraph "Driving Ports"
+            APIPort((API Port)):::port
+            CmdPort((Command Port)):::port
+        end
+
+        subgraph "Domain Model"
+            OrderAgg[Order Aggregate]:::core
+            UserAgg[User Identity]:::core
+            PaymentAgg[Payment Logic]:::core
+            
+            OrderAgg --> UserAgg
+            OrderAgg --> PaymentAgg
+        end
+
+        subgraph "Driven Ports"
+            RepoPort((Repo Port)):::port
+            EventPort((Event Port)):::port
+        end
+        
+        APIPort --> OrderAgg
+        CmdPort --> OrderAgg
+        OrderAgg --> RepoPort
+        PaymentAgg --> EventPort
     end
 
-    HTTPS --> API
-    API --> SVC
-    SVC --> REPO
-    REPO --> JDBC
+    subgraph "Adapters (Infrastructure)"
+        REST[REST Adapter]:::adapter
+        GRPC[gRPC Adapter]:::adapter
+        Postgres[Postgres Adapter]:::adapter
+        Kafka[Kafka Producer]:::adapter
+    end
 
-    style SVC fill:#3b82f6,stroke:#fff,stroke-width:2px
-    style API fill:#a855f7,stroke:#fff
-    style REPO fill:#10b981,stroke:#fff`} />
+    Client --> REST
+    External --> GRPC
+    
+    REST --> APIPort
+    GRPC --> CmdPort
+    
+    RepoPort --> Postgres
+    EventPort --> Kafka`} />
                                         </div>
                                     </div>
                                 </motion.div>
@@ -280,26 +314,49 @@ export default function LiveRunPage() {
                                         </div>
                                         <div className="flex-1 min-h-0">
                                             <MermaidViewer chart={`graph LR
-    subgraph "Legacy Monolith"
-        M1[UserController]
-        M2[PaymentService]
+    classDef monorepo fill:#1e293b,stroke:#64748b,stroke-width:2px,stroke-dasharray: 5 5,color:#94a3b8
+    classDef microservice fill:#0f172a,stroke:#10b981,stroke-width:2px,color:#fff
+    classDef db fill:#1e293b,stroke:#3b82f6,stroke-width:2px,color:#60a5fa
+    classDef proxy fill:#1e293b,stroke:#f59e0b,stroke-width:2px,color:#fcd34d
+
+    LB("Load Balancer / Proxy"):::proxy
+
+    subgraph "Legacy Monolith (Deprecated)"
+        direction TB
+        LegacyUser["User Module"]:::monorepo
+        LegacyOrder["Order Module"]:::monorepo
+        LegacyPay["Payment Module"]:::monorepo
+        
+        LegacyOrder --> LegacyUser
     end
 
-    subgraph "New Order Domain"
-        D1[OrderController]
-        D2[OrderService]
-        D3[OrderRepository]
+    subgraph "Microservices (New)"
+        direction TB
+        NewOrderSVC["Order Service (Go)"]:::microservice
+        NewOrderAPI["Order API (Gin)"]:::microservice
+        NewOrderWorker["Order Worker"]:::microservice
+        
+        NewOrderAPI --> NewOrderSVC
+        NewOrderSVC --> NewOrderWorker
     end
 
-    M1 -.-> D2
-    D2 --> D3
-    M2 -- Shared DB --> D3
+    subgraph "Data Layer"
+        SharedDB[("Shared Legacy DB")]:::db
+        NewOrderDB[("New Order DB")]:::db
+        
+        LegacyUser --> SharedDB
+        LegacyPay --> SharedDB
+        
+        NewOrderSVC --> NewOrderDB
+        NewOrderWorker --> NewOrderDB
+    end
 
-    style D1 fill:#10b981,stroke:#fff
-    style D2 fill:#10b981,stroke:#fff
-    style D3 fill:#10b981,stroke:#fff
-    style M1 fill:#475569,stroke-dasharray: 5 5
-    style M2 fill:#475569,stroke-dasharray: 5 5`} />
+    LB -->|/users| LegacyUser
+    LB -->|/payments| LegacyPay
+    LB -->|/orders| NewOrderAPI
+
+    NewOrderSVC -.->|Anti-Corruption Layer| LegacyUser
+`} />
                                         </div>
                                     </div>
                                 </motion.div>

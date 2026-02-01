@@ -11,6 +11,11 @@ This system simulates an advanced AI team working on code migration. It ingests 
 *   **Interactive Analysis**: Dependency graph and architectural mapping.
 *   **Live Comparison**: Side-by-side diff viewer for verified modernization.
 
+## 📊 Reports
+*   [Technical Report (CTO)](TECHNICAL_REPORT_CTO.md) - Deep dive into architecture, API, and code implementation.
+*   [Stakeholder Report (CEO)](STAKEHOLDER_REPORT_CEO.md) - Executive summary of value, roadmap, and business risks.
+*   [File Inventory (CSV)](APPENDIX_FILE_INVENTORY.csv) - Complete list of repository files with metadata.
+
 ## 🏗️ Architecture
 
 ### System Components

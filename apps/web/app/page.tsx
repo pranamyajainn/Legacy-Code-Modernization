@@ -219,7 +219,7 @@ export default function Home() {
                     )}
 
                     {step === 5 && (
-                        <div className="flex flex-col h-full gap-4">
+                        <div className="flex flex-col h-auto gap-4">
                             <div className="flex items-center justify-between shrink-0">
                                 <div className="flex items-center gap-4">
                                     <div className="p-2 rounded-full bg-green-500/10 border border-green-500/50">
@@ -237,7 +237,7 @@ export default function Home() {
                                 </div>
                             </div>
 
-                            <div className="flex-1 min-h-0 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
+                            <div className="h-[600px] border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
                                 <CodeDiffViewer />
                             </div>
                         </div>

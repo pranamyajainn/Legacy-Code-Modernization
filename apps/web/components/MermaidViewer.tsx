@@ -59,7 +59,7 @@ export default function MermaidViewer({ chart }: { chart: string }) {
                 <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider">Architecture Diagram</span>
             </div>
             <div className="flex-1 flex items-center justify-center p-4 bg-slate-900 overflow-auto">
-                <div className="mermaid" ref={containerRef}>
+                <div className="mermaid w-full h-full flex items-center justify-center [&_svg]:!w-full [&_svg]:!h-full [&_svg]:!max-w-none" ref={containerRef}>
                     {chart}
                 </div>
             </div>
