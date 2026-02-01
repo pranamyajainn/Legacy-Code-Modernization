@@ -1,0 +1,20 @@
+{
+    "name": "api",
+    "scripts": {
+        "dev": "tsx watch src/index.ts"
+    },
+    "dependencies": {
+        "hono": "latest",
+        "@hono/node-server": "latest",
+        "uuid": "latest",
+        "fs-extra": "latest",
+        "glob": "latest"
+    },
+    "devDependencies": {
+        "tsx": "latest",
+        "@types/node": "latest",
+        "@types/uuid": "latest",
+        "@types/fs-extra": "latest",
+        "@types/glob": "latest"
+    }
+}
